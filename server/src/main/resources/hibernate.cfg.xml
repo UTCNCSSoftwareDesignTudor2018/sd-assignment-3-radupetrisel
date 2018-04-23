@@ -3,13 +3,14 @@
         "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
         "http://hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
-    <session-factory>
-        <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
-        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/Book</property>
-        <property name="hibernate.connection.username">root</property>
-        <property name="hibernate.connection.password"></property>
-        <property name="hibernate.current_session_context_class">thread</property>
+  <session-factory>
+    <property name="connection.driver_class">com.microsoft.sqlserver.jdbc.SQLServerDriver</property>
+    <property name="connection.url">jdbc:sqlserver://localhost;servername=DESKTOP-TN2TBF7\ASGN3;databaseName=asgn3</property>
+    <property name="connection.username">sa</property>
+    <property name="connection.password">asdf</property>
+    <property name="hibernate.hbm2ddl.auto">create</property>
 
-        <mapping class="co.mobiwise.hibernate.model.Book1"/>
-    </session-factory>
+    <property name="dialect">org.hibernate.dialect.SQLServerDialect</property>
+    <mapping class="server.Author"/>
+  </session-factory>
 </hibernate-configuration>
