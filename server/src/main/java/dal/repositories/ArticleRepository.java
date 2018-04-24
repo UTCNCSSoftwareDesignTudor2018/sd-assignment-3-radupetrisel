@@ -2,10 +2,17 @@ package dal.repositories;
 
 import static dal.utils.Hibernate.openSession;
 
+import java.util.List;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import dal.entities.Article;
+import dal.entities.Article_;
 
 public class ArticleRepository {
 
@@ -17,6 +24,19 @@ public class ArticleRepository {
 		session.save(article);
 		tx.commit();
 		session.close();
+	}
+	
+	public List<Article> findByTitle(String title){
+		
+		Session session = openSession();
+		
+		CriteriaBuilder builder = session.getCriteriaBuilder();
+		
+		CriteriaQuery<Article> query = builder.createQuery(Article.class);
+		Root<Article> root = query.from(Article.class);
+		
+		query.select(root).where(builder.equal(root.get(Article_.title), title));
+		return session.createQuery(query).getResultList();				
 	}
 	
 	public Article findById(int id) {

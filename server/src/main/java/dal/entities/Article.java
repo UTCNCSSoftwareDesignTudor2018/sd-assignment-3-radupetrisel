@@ -70,4 +70,10 @@ public class Article {
 	public void setAuthor(User author) {
 		this.author = author;
 	}
+
+	@Override
+	public String toString() {
+		return "Article [id=" + id + ", title=" + title + ", articleAbstract=" + articleAbstract + ", body=" + body
+				+ ", author=" + author + "]";
+	}
 }

@@ -26,12 +26,6 @@ dependencies {
     compile group: 'org.hibernate', name: 'hibernate-gradle-plugin', version: '5.2.16.Final'
     
     testCompile group: 'com.microsoft.sqlserver', name: 'mssql-jdbc', version: '6.4.0.jre8'
+    
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.9.5'
 }
-
-task hello{
-	
-	doLast {
-		println "hello world"
-	}
-}
-

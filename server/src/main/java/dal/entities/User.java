@@ -71,4 +71,9 @@ public class User {
 		this.articles = articles;
 	}
 
+	@Override
+	public String toString() {
+		return "User [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", password=" + password + "]";
+	}
+
 }
