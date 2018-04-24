@@ -50,11 +50,11 @@ public class ClientHandler implements Runnable {
 				
 				int id = ubll.login(username, password);
 				
-				if (id > 0) { out.println("success");
+				if (id > 0) { out.println(true);
 					this.id = id;
 				}
 				else {
-					out.println("invalid password");
+					out.println(false);
 					Thread.currentThread().interrupt();
 				}
 					
@@ -76,6 +76,12 @@ public class ClientHandler implements Runnable {
 				
 				ubll.addArticle(this.id, article);
 				break;
+				
+			case "close":
+				in.close();
+				out.close();
+				socket.close();
+				Thread.currentThread().interrupt();
 			}
 			
 			
