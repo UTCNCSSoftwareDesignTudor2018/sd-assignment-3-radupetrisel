@@ -9,7 +9,7 @@ public class Hibernate {
 	private static SessionFactory factory;
 	private static Session session;
 	
-	private static SessionFactory getInstance() {
+	public static SessionFactory getInstance() {
 		
 		if (factory == null)
 			factory = new Configuration().configure().buildSessionFactory();

@@ -26,8 +26,11 @@ public class User {
 	private String lastName;
 
 	@Column
-	private String password = "1234";
-
+	private int password = "1234".hashCode();
+	
+	@Column(unique = true)
+	private String username;
+	
 	@OneToMany(mappedBy = "author")
 	private List<Article> articles = new ArrayList<Article>();
 
@@ -55,12 +58,16 @@ public class User {
 		this.lastName = lastName;
 	}
 
-	public String getPassword() {
+	public int getPassword() {
 		return password;
 	}
-
-	public void setPassword(String password) {
+	
+	public void setPassword(int password) {
 		this.password = password;
+	}
+	
+	public void setPassword(String password) {
+		this.password = password.hashCode();
 	}
 
 	public List<Article> getArticles() {
@@ -71,9 +78,17 @@ public class User {
 		this.articles = articles;
 	}
 
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
 	@Override
 	public String toString() {
-		return "User [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", password=" + password + "]";
+		return firstName + " " + lastName;
 	}
 
 }

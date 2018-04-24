@@ -13,9 +13,10 @@ import org.hibernate.Transaction;
 
 import dal.entities.Article;
 import dal.entities.Article_;
+import dal.entities.User;
 
 public class ArticleRepository {
-
+	
 	public void save(Article article) {
 
 		Session session = openSession();
@@ -37,6 +38,20 @@ public class ArticleRepository {
 		
 		query.select(root).where(builder.equal(root.get(Article_.title), title));
 		return session.createQuery(query).getResultList();				
+	}
+	
+	public List<Article> findByAuthor(User author){
+		
+		Session session = openSession();
+		
+		CriteriaBuilder builder = session.getCriteriaBuilder();
+		
+		CriteriaQuery<Article> query = builder.createQuery(Article.class);
+		Root<Article> root = query.from(Article.class);
+		
+		query.select(root).where(builder.equal(root.get(Article_.author), author));
+		
+		return session.createQuery(query).getResultList();	
 	}
 	
 	public Article findById(int id) {
@@ -64,6 +79,5 @@ public class ArticleRepository {
 		tx.commit();
 		session.close();
 	}
-	
 
 }

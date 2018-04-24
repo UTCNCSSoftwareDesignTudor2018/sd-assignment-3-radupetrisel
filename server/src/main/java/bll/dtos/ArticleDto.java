@@ -1,7 +1,9 @@
 package bll.dtos;
 
-import org.codehaus.jackson.annotate.JsonCreator;
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import dal.entities.Article;
 
 public class ArticleDto {
 
@@ -13,7 +15,15 @@ public class ArticleDto {
 	public ArticleDto() {
 
 	}
-
+	
+	public ArticleDto(Article article) {
+		
+		this.title = article.getTitle();
+		this.author = article.getAuthor().toString();
+		this.articleAbstract = article.getArticleAbstract();
+		this.body = article.getBody();
+	}
+	
 	@JsonCreator
 	public ArticleDto(@JsonProperty(value = "title") String title, @JsonProperty(value = "author") String author,
 			@JsonProperty(value = "abstract") String articleAbstract, @JsonProperty(value = "body") String body) {
@@ -22,6 +32,16 @@ public class ArticleDto {
 		this.author = author;
 		this.articleAbstract = articleAbstract;
 		this.body = body;
+	}
+	
+	public Article convert() {
+		
+		Article article = new Article();
+		article.setArticleAbstract(articleAbstract);
+		article.setBody(body);
+		article.setTitle(title);	
+		
+		return article;
 	}
 
 	public String getTitle() {

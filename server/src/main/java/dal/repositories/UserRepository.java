@@ -1,12 +1,17 @@
 package dal.repositories;
 
-import static dal.utils.Hibernate.*;
+import static dal.utils.Hibernate.openSession;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import dal.entities.User;
+import dal.entities.User_;
 
 public class UserRepository {
 
@@ -17,6 +22,21 @@ public class UserRepository {
 		session.save(user);
 		tx.commit();
 		session.close();
+	}
+	
+	public User findByUsername(String username) {
+		
+		Session session = openSession();
+		
+		CriteriaBuilder builder = session.getCriteriaBuilder();
+		CriteriaQuery<User> query = builder.createQuery(User.class);
+		Root<User> root = query.from(User.class);
+		
+		query.select(root).where(builder.equal(root.get(User_.username), username));
+		
+		return session.createQuery(query).getSingleResult();
+		
+		
 	}
 
 	public User findById(int id) {
