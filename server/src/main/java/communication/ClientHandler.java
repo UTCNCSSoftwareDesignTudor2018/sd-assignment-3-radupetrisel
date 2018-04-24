@@ -5,8 +5,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.List;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import bll.UserBLL;
+import bll.dtos.ArticleDto;
 import dal.repositories.UserRepository;
 
 public class ClientHandler implements Runnable {
@@ -15,12 +19,15 @@ public class ClientHandler implements Runnable {
 	private BufferedReader in;
 	private PrintWriter out;
 	private int id;
+	private UserBLL ubll;
 	
 	public ClientHandler(Socket socket) {
 		this.socket = socket;
 		try {
 			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			out = new PrintWriter(socket.getOutputStream());
+			ubll = new UserBLL();
+			ubll.setUserRepo(new UserRepository());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -41,16 +48,34 @@ public class ClientHandler implements Runnable {
 				String username = in.readLine();
 				String password = in.readLine();
 				
-				UserBLL ubll = new UserBLL();
-				ubll.setUserRepo(new UserRepository());
 				int id = ubll.login(username, password);
 				
-				if (id > 0) out.println("success");
-				else out.println("invalid password");
+				if (id > 0) { out.println("success");
+					this.id = id;
+				}
+				else {
+					out.println("invalid password");
+					Thread.currentThread().interrupt();
+				}
 					
 				out.flush();
 				break;
-			
+				
+			case "articles":
+				
+				List<ArticleDto> articles = ubll.viewArticles(this.id);
+				
+				ObjectMapper mapper = new ObjectMapper();
+				out.println(mapper.writeValueAsString(articles));
+				out.flush();
+				break;
+				
+			case "add":
+				
+				ArticleDto article = new ObjectMapper().readValue(in.readLine(), ArticleDto.class);
+				
+				ubll.addArticle(this.id, article);
+				break;
 			}
 			
 			

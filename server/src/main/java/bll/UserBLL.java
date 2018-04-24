@@ -11,7 +11,6 @@ import dal.repositories.UserRepository;
 public class UserBLL {
 
 	private UserRepository userRepo;
-	private ArticleRepository articleRepo;
 	
 	public UserBLL() {
 		
@@ -23,19 +22,6 @@ public class UserBLL {
 
 	public void setUserRepo(UserRepository userRepo) {
 		this.userRepo = userRepo;
-	}
-
-	public ArticleRepository getArticleRepo() {
-		return articleRepo;
-	}
-
-	public void setArticleRepo(ArticleRepository articleRepo) {
-		this.articleRepo = articleRepo;
-	}
-
-	public UserBLL(UserRepository userRepo, ArticleRepository articleRepo) {
-		this.userRepo = userRepo;
-		this.articleRepo = articleRepo;
 	}
 	
 	public int login(String username, String password) {
@@ -57,7 +43,6 @@ public class UserBLL {
 		
 		User user = userRepo.findById(authorId);
 		
-		new ArticleBLL().save(article, user);
-		
+		new ArticleBLL().save(article, user);	
 	}
 }
