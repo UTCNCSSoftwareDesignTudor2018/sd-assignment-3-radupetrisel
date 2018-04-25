@@ -3,6 +3,8 @@ package client;
 import java.io.IOException;
 import java.net.UnknownHostException;
 
+import communication.Client;
+import communication.Requester;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import presentation.controllers.LoginController;
@@ -12,6 +14,11 @@ public class App extends Application {
 
 	public static void main(String[] args) throws UnknownHostException, IOException {
 
+		Client client = new Client("localhost", 1111);
+		Requester.setClient(client);
+		
+		new Thread(client).start();
+		
 		launch(args);
 	}
 

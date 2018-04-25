@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,8 +21,9 @@ public class ClientHandler implements Runnable {
 	private PrintWriter out;
 	private int id;
 	private UserBLL ubll;
-	
+
 	public ClientHandler(Socket socket) {
+		System.out.println("creating new client");
 		this.socket = socket;
 		try {
 			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -36,59 +38,62 @@ public class ClientHandler implements Runnable {
 	@Override
 	public void run() {
 
-		try {
-			
-			String request = in.readLine();
-			
-			switch (request) {
-			
-			case "login":
-				
-				
-				String username = in.readLine();
-				String password = in.readLine();
-				
-				int id = ubll.login(username, password);
-				
-				if (id > 0) { out.println(true);
-					this.id = id;
-				}
-				else {
-					out.println(false);
+		while (true) {
+			try {
+
+				String request = in.readLine();
+
+				switch (request) {
+
+				case "login":
+
+					String username = in.readLine();
+					String password = in.readLine();
+
+					int id = ubll.login(username, password);
+
+					if (id > 0) {
+						out.println(true);
+						this.id = id;
+					} else {
+						out.println(false);
+						Thread.currentThread().interrupt();
+					}
+
+					out.flush();
+					break;
+
+				case "articles":
+
+					List<ArticleDto> articles = ubll.viewArticles(this.id);
+
+					ObjectMapper mapper = new ObjectMapper();
+					out.println(mapper.writeValueAsString(articles));
+					out.flush();
+					break;
+
+				case "add":
+
+					ArticleDto article = new ObjectMapper().readValue(in.readLine(), ArticleDto.class);
+
+					ubll.addArticle(this.id, article);
+					break;
+
+				case "close":
+					in.close();
+					out.close();
+					socket.close();
 					Thread.currentThread().interrupt();
 				}
-					
-				out.flush();
-				break;
-				
-			case "articles":
-				
-				List<ArticleDto> articles = ubll.viewArticles(this.id);
-				
-				ObjectMapper mapper = new ObjectMapper();
-				out.println(mapper.writeValueAsString(articles));
-				out.flush();
-				break;
-				
-			case "add":
-				
-				ArticleDto article = new ObjectMapper().readValue(in.readLine(), ArticleDto.class);
-				
-				ubll.addArticle(this.id, article);
-				break;
-				
-			case "close":
-				in.close();
-				out.close();
-				socket.close();
-				Thread.currentThread().interrupt();
-			}
-			
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 
+			} catch (SocketException e) {
+				Thread.currentThread().interrupt();
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 
 }
