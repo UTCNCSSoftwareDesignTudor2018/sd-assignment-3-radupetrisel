@@ -4,10 +4,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.ConnectException;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.PriorityBlockingQueue;
+import java.util.concurrent.Semaphore;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -18,40 +20,41 @@ public class Client implements Runnable {
 	private Socket socket;
 	private PrintWriter out;
 	private BufferedReader in;
-	private volatile Queue<Pair<String, String>> messages;
-	private volatile Queue<String> responses;
-	
-	private class Pair<A, B>{
-		
+	private Queue<Pair<String, String>> messages;
+	private Queue<String> responses;
+	private Semaphore responseSemaphore;
+	private Semaphore messageSemaphore;
+
+	private class Pair<A, B> {
+
 		private A first;
 		private B second;
-		
+
 		public Pair(A a, B b) {
 			first = a;
 			second = b;
 		}
-		
+
 		public A getFirst() {
 			return first;
 		}
-		
+
 		public B getSecond() {
 			return second;
 		}
-		
+
 	}
-	
-	public Client(String host, int port) {
-		try {
-			socket = new Socket(host, port);
-			out = new PrintWriter(socket.getOutputStream());
-			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			messages = new LinkedBlockingQueue<Pair<String, String>>();
-			responses = new LinkedBlockingQueue<String>();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
+	public Client(String host, int port) throws UnknownHostException, IOException {
+
+		responseSemaphore = new Semaphore(0);
+		messageSemaphore = new Semaphore(0);
+		socket = new Socket(host, port);
+		out = new PrintWriter(socket.getOutputStream());
+		in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+		messages = new LinkedBlockingQueue<Pair<String, String>>();
+		responses = new LinkedBlockingQueue<String>();
+
 	}
 
 	private String login(String username, String password) throws IOException {
@@ -67,6 +70,7 @@ public class Client implements Runnable {
 	private String viewArticles() throws JsonParseException, JsonMappingException, IOException {
 
 		out.println("articles");
+		out.flush();
 
 		return in.readLine();
 	}
@@ -74,21 +78,45 @@ public class Client implements Runnable {
 	private void add(String article) throws JsonGenerationException, JsonMappingException, IOException {
 
 		out.println(article);
+		out.flush();
 
 	}
-	
+
 	public void addMessage(String command, String body) {
+
 		this.messages.add(new Pair<String, String>(command, body));
+		messageSemaphore.release();
 	}
-	
+
+	private void close() {
+		if (out != null) {
+			out.println("close");
+			out.flush();
+		}
+	}
+
 	public String getResponse() {
-		return this.responses.poll();
+
+		try {
+			responseSemaphore.acquire();
+			return this.responses.poll();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	@Override
 	public void run() {
 
-		while (true) {
+		boolean closed = false;
+		while (!closed) {
+
+			try {
+				messageSemaphore.acquire();
+			} catch (InterruptedException e1) {
+				e1.printStackTrace();
+			}
 
 			if (!messages.isEmpty()) {
 
@@ -105,6 +133,7 @@ public class Client implements Runnable {
 					String password = userpass[1];
 					try {
 						responses.add(this.login(username, password));
+						responseSemaphore.release();
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
@@ -126,12 +155,15 @@ public class Client implements Runnable {
 					try {
 						this.add(body);
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 
 					break;
 
+				case "close":
+					closed = true;
+					close();
+					break;
 				}
 
 			}

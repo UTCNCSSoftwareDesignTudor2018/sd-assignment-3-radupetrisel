@@ -26,6 +26,7 @@ public class ClientHandler implements Runnable {
 		System.out.println("creating new client");
 		this.socket = socket;
 		try {
+			this.socket.setKeepAlive(true);
 			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			out = new PrintWriter(socket.getOutputStream());
 			ubll = new UserBLL();
@@ -38,7 +39,8 @@ public class ClientHandler implements Runnable {
 	@Override
 	public void run() {
 
-		while (true) {
+		boolean closed = false;
+		while (!closed) {
 			try {
 
 				String request = in.readLine();
@@ -57,7 +59,6 @@ public class ClientHandler implements Runnable {
 						this.id = id;
 					} else {
 						out.println(false);
-						Thread.currentThread().interrupt();
 					}
 
 					out.flush();
@@ -80,17 +81,14 @@ public class ClientHandler implements Runnable {
 					break;
 
 				case "close":
+					System.out.println("closing client");
 					in.close();
 					out.close();
 					socket.close();
-					Thread.currentThread().interrupt();
+					closed = true;
+					break;
 				}
-
-			} catch (SocketException e) {
-				Thread.currentThread().interrupt();
-				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

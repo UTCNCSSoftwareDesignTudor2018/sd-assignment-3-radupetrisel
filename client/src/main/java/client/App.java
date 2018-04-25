@@ -1,6 +1,7 @@
 package client;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.UnknownHostException;
 
 import communication.Client;
@@ -12,25 +13,36 @@ import presentation.views.LoginScene;
 
 public class App extends Application {
 
-	public static void main(String[] args) throws UnknownHostException, IOException {
+	public static void main(String[] args) throws InterruptedException, UnknownHostException, IOException {
 
-		Client client = new Client("localhost", 1111);
+		Client client = null;
+		try {
+			client = new Client("localhost", 1111);
+		} catch (ConnectException e) {
+			System.out.println("cannot connect");
+			System.exit(1);
+		}
+		
 		Requester.setClient(client);
-		
-		new Thread(client).start();
-		
+		Thread t = new Thread(client);
+
+		t.start();
+
 		launch(args);
+
+		t.join();
 	}
 
 	@Override
 	public void start(Stage arg0) throws Exception {
-		
+
 		Stage stage = new Stage();
-		
+
 		new LoginController(new LoginScene(stage, 300, 300));
-		
+
 		stage.show();
-		
+
+		stage.setOnCloseRequest(e -> Requester.close());
 	}
 
 }
