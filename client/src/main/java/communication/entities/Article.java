@@ -18,8 +18,9 @@ public class Article {
 		this.articleAbstract = articleAbstract;
 		this.body = body;
 	}
-	
-	public Article() {}
+
+	public Article() {
+	}
 
 	public String getTitle() {
 		return title;
@@ -51,5 +52,10 @@ public class Article {
 
 	public void setBody(String body) {
 		this.body = body;
+	}
+
+	@Override
+	public String toString() {
+		return this.title + "\n" + this.author + "\n" + this.articleAbstract;
 	}
 }

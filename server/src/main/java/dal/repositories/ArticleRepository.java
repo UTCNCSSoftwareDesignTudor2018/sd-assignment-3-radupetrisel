@@ -80,4 +80,19 @@ public class ArticleRepository {
 		session.close();
 	}
 
+	public List<Article> findAll() {
+		
+		Session session = openSession();
+
+		CriteriaBuilder builder = session.getCriteriaBuilder();
+		
+		CriteriaQuery<Article> query = builder.createQuery(Article.class);
+		Root<Article> root = query.from(Article.class);
+		
+		List<Article> articles = session.createQuery(query.select(root)).getResultList();
+		session.close();
+		
+		return articles;
+	}
+
 }

@@ -15,9 +15,11 @@ public class LoginScene {
 	private TextField username;
 	private PasswordField password;
 	private Button login;
+	private Stage stage;
 
 	public LoginScene(Stage stage, int width, int height) {
 
+		this.stage = stage;
 		VBox box = new VBox();
 		box.setAlignment(Pos.CENTER);
 		box.setSpacing(10);
@@ -51,5 +53,9 @@ public class LoginScene {
 	
 	public void setLoginHandler(EventHandler<ActionEvent> e) {
 		login.setOnAction(e);
+	}
+	
+	public Stage getStage() {
+		return this.stage;
 	}
 }

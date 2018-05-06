@@ -5,11 +5,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.net.SocketException;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import bll.ArticleBLL;
 import bll.UserBLL;
 import bll.dtos.ArticleDto;
 import dal.repositories.UserRepository;
@@ -21,8 +21,10 @@ public class ClientHandler implements Runnable {
 	private PrintWriter out;
 	private int id;
 	private UserBLL ubll;
+	private ArticleBLL abll;
 
 	public ClientHandler(Socket socket) {
+		
 		System.out.println("creating new client");
 		this.socket = socket;
 		try {
@@ -31,6 +33,7 @@ public class ClientHandler implements Runnable {
 			out = new PrintWriter(socket.getOutputStream());
 			ubll = new UserBLL();
 			ubll.setUserRepo(new UserRepository());
+			abll = new ArticleBLL();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -64,10 +67,10 @@ public class ClientHandler implements Runnable {
 					out.flush();
 					break;
 
-				case "articles":
+				case "viewArticles":
 
-					List<ArticleDto> articles = ubll.viewArticles(this.id);
-
+					List<ArticleDto> articles = abll.findAll();
+					
 					ObjectMapper mapper = new ObjectMapper();
 					out.println(mapper.writeValueAsString(articles));
 					out.flush();

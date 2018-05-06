@@ -1,5 +1,8 @@
 package bll;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import bll.dtos.ArticleDto;
 import dal.entities.Article;
 import dal.entities.User;
@@ -11,6 +14,13 @@ public class ArticleBLL {
 	
 	public ArticleBLL() {
 		articleRepo = new ArticleRepository();
+	}
+	
+	public List<ArticleDto> findAll(){
+		
+		List<ArticleDto> articles = articleRepo.findAll().stream().map(a -> new ArticleDto(a)).collect(Collectors.toList());
+		
+		return articles;
 	}
 	
 	public void save(ArticleDto article, User author) {

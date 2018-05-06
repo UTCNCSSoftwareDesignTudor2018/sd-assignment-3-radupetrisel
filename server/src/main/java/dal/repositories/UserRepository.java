@@ -34,9 +34,9 @@ public class UserRepository {
 		
 		query.select(root).where(builder.equal(root.get(User_.username), username));
 		
-		return session.createQuery(query).getSingleResult();
+		User user = session.createQuery(query).getSingleResult();
 		
-		
+		return user;
 	}
 
 	public User findById(int id) {

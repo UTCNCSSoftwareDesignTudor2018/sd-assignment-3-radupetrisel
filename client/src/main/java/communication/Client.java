@@ -69,13 +69,13 @@ public class Client implements Runnable {
 
 	private String viewArticles() throws JsonParseException, JsonMappingException, IOException {
 
-		out.println("articles");
+		out.println("viewArticles");
 		out.flush();
 
 		return in.readLine();
 	}
 
-	private void add(String article) throws JsonGenerationException, JsonMappingException, IOException {
+	private void addArticle(String article) throws JsonGenerationException, JsonMappingException, IOException {
 
 		out.println(article);
 		out.flush();
@@ -125,45 +125,38 @@ public class Client implements Runnable {
 				String command = message.getFirst();
 				String body = message.getSecond();
 
-				switch (command) {
+				try {
+					switch (command) {
 
-				case "login":
-					String[] userpass = body.split(" ");
-					String username = userpass[0];
-					String password = userpass[1];
-					try {
+					case "login":
+						String[] userpass = body.split(" ");
+						String username = userpass[0];
+						String password = userpass[1];
 						responses.add(this.login(username, password));
 						responseSemaphore.release();
-					} catch (IOException e) {
-						e.printStackTrace();
+
+						break;
+
+					case "viewArticles":
+						
+						responses.add(viewArticles());
+						responseSemaphore.release();
+						break;
+
+					case "addArticle":
+
+						addArticle(body);
+						break;
+
+					case "close":
+						
+						closed = true;
+						close();
+						break;
 					}
-
-					break;
-
-				case "viewArticles":
-
-					try {
-						responses.add(this.viewArticles());
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					break;
-
-				case "addArticle":
-
-					try {
-						this.add(body);
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-
-					break;
-
-				case "close":
-					closed = true;
-					close();
-					break;
+					
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
 
 			}
