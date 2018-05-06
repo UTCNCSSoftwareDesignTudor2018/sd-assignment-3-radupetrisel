@@ -12,6 +12,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import bll.ArticleBLL;
 import bll.UserBLL;
 import bll.dtos.ArticleDto;
+import communication.commands.Login;
+import communication.commands.Request;
 import dal.repositories.UserRepository;
 
 public class ClientHandler implements Runnable {
@@ -24,16 +26,18 @@ public class ClientHandler implements Runnable {
 	private ArticleBLL abll;
 
 	public ClientHandler(Socket socket) {
-		
+
 		System.out.println("creating new client");
 		this.socket = socket;
+		
 		try {
-			this.socket.setKeepAlive(true);
+			
 			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			out = new PrintWriter(socket.getOutputStream());
 			ubll = new UserBLL();
 			ubll.setUserRepo(new UserRepository());
 			abll = new ArticleBLL();
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -45,17 +49,22 @@ public class ClientHandler implements Runnable {
 		boolean closed = false;
 		while (!closed) {
 			try {
+				
+				String command = in.readLine();
+				
+				if (command == null) continue;
+				
+				Request request = null;
+				
+				request = new ObjectMapper().readValue(command, Request.class);
+		
+				switch (request.getClass().getSimpleName()) {
+				
+				case "Login":
 
-				String request = in.readLine();
-
-				switch (request) {
-
-				case "login":
-
-					String username = in.readLine();
-					String password = in.readLine();
-
-					int id = ubll.login(username, password);
+					Login log = (Login)request;
+					
+					int id = ubll.login(log.getUsername(), log.getPassword());
 
 					if (id > 0) {
 						out.println(true);
@@ -67,23 +76,23 @@ public class ClientHandler implements Runnable {
 					out.flush();
 					break;
 
-				case "viewArticles":
+				case "ViewArticles":
 
 					List<ArticleDto> articles = abll.findAll();
-					
+
 					ObjectMapper mapper = new ObjectMapper();
 					out.println(mapper.writeValueAsString(articles));
 					out.flush();
 					break;
 
-				case "add":
+//				case 
+//
+//					ArticleDto article = new ObjectMapper().readValue(in.readLine(), ArticleDto.class);
+//
+//					ubll.addArticle(this.id, article);
+//					break;
 
-					ArticleDto article = new ObjectMapper().readValue(in.readLine(), ArticleDto.class);
-
-					ubll.addArticle(this.id, article);
-					break;
-
-				case "close":
+				case "Close":
 					System.out.println("closing client");
 					in.close();
 					out.close();

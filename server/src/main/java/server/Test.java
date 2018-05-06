@@ -11,7 +11,7 @@ public class Test {
 		Server server = new Server(1111);
 		server.serve();
 		
-		dal.utils.Hibernate.close();
+		//dal.utils.Hibernate.close();
 	}
 
 }

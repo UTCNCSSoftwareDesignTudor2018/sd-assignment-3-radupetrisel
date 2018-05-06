@@ -5,26 +5,23 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
 public class Hibernate {
-
+	
 	private static SessionFactory factory;
 	private static Session session;
+	private static Object mutex = new Object();
 	
 	public static SessionFactory getInstance() {
 		
-		if (factory == null)
-			factory = new Configuration().configure().buildSessionFactory();
+		SessionFactory fact = factory;
+		if (fact == null)
+			synchronized(mutex) {
+				fact = factory;
+				if (fact == null)
+					fact = factory = new Configuration().configure().buildSessionFactory();
+			}
 		
 		return factory;
 	}
-	
-	public static Session openSession() {
-		
-		if (session == null)
-			session = getInstance().openSession();
-		
-		return session;
-	}
-	
 	
 	public static void close() {
 		factory.close();

@@ -1,6 +1,6 @@
 package dal.repositories;
 
-import static dal.utils.Hibernate.openSession;
+import static dal.utils.Hibernate.getInstance;
 
 import java.util.List;
 
@@ -19,7 +19,7 @@ public class ArticleRepository {
 	
 	public void save(Article article) {
 
-		Session session = openSession();
+		Session session = getInstance().openSession();
 		
 		Transaction tx = session.beginTransaction();
 		session.save(article);
@@ -29,7 +29,7 @@ public class ArticleRepository {
 	
 	public List<Article> findByTitle(String title){
 		
-		Session session = openSession();
+		Session session = getInstance().openSession();
 		
 		CriteriaBuilder builder = session.getCriteriaBuilder();
 		
@@ -42,7 +42,7 @@ public class ArticleRepository {
 	
 	public List<Article> findByAuthor(User author){
 		
-		Session session = openSession();
+		Session session = getInstance().openSession();
 		
 		CriteriaBuilder builder = session.getCriteriaBuilder();
 		
@@ -56,24 +56,16 @@ public class ArticleRepository {
 	
 	public Article findById(int id) {
 		
-		Session session = openSession();
+		Session session = getInstance().openSession();
 		Article article = session.get(Article.class, id);
 		session.close();
 		
 		return article;
 	}
 	
-	public Article getOne(int id) {
-		
-		Session session = openSession();
-		Article article = session.load(Article.class, id);
-		
-		return article;		
-	}
-	
 	public void delete(Article article) {
 		
-		Session session = openSession();
+		Session session = getInstance().openSession();
 		Transaction tx = session.beginTransaction();
 		session.delete(article);
 		tx.commit();
@@ -82,7 +74,7 @@ public class ArticleRepository {
 
 	public List<Article> findAll() {
 		
-		Session session = openSession();
+		Session session = getInstance().openSession();
 
 		CriteriaBuilder builder = session.getCriteriaBuilder();
 		

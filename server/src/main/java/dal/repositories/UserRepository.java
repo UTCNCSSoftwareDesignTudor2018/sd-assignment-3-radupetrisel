@@ -1,6 +1,6 @@
 package dal.repositories;
 
-import static dal.utils.Hibernate.openSession;
+import static dal.utils.Hibernate.getInstance;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -17,7 +17,7 @@ public class UserRepository {
 
 	public void save(User user) {
 
-		Session session = openSession();
+		Session session = getInstance().openSession();
 		Transaction tx = session.beginTransaction();
 		session.save(user);
 		tx.commit();
@@ -26,7 +26,7 @@ public class UserRepository {
 	
 	public User findByUsername(String username) {
 		
-		Session session = openSession();
+		Session session = getInstance().openSession();
 		
 		CriteriaBuilder builder = session.getCriteriaBuilder();
 		CriteriaQuery<User> query = builder.createQuery(User.class);
@@ -36,29 +36,22 @@ public class UserRepository {
 		
 		User user = session.createQuery(query).getSingleResult();
 		
+		session.close();
 		return user;
 	}
 
 	public User findById(int id) {
 
-		Session session = openSession();
+		Session session = getInstance().openSession();
 		User user = session.get(User.class, id);
 		session.close();
 
 		return user;
 	}
 	
-	public User getOne(int id) throws ObjectNotFoundException{
-		
-		Session session = openSession();
-		User user = session.load(User.class, id);
-		
-		return user;
-	}
-	
 	public void delete(User user) {
 		
-		Session session = openSession();
+		Session session = getInstance().openSession();
 		Transaction tx = session.beginTransaction();
 		session.delete(user);
 		tx.commit();
