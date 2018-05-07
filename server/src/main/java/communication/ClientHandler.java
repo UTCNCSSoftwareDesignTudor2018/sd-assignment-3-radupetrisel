@@ -9,8 +9,8 @@ import java.util.Observable;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import communication.requests.CloseRequest;
 import communication.requests.Request;
-import communication.responses.CloseResponse;
 import communication.responses.Response;
 
 public class ClientHandler extends Observable implements Runnable {
@@ -41,31 +41,27 @@ public class ClientHandler extends Observable implements Runnable {
 		try {
 			while (!closed) {
 
-				Request request = new ObjectMapper().readValue(in.readLine(), Request.class);
+				String command = in.readLine();
+
+				Request request = new ObjectMapper().readValue(command, Request.class);
 
 				Response resp = request.execute();
 
 				out.println(new ObjectMapper().writeValueAsString(resp));
 				out.flush();
-				
-				if (resp instanceof CloseResponse) {
-					this.notifyObservers();
+
+				if (request instanceof CloseRequest) {
 					closed = true;
 				}
 			}
 
+			this.setChanged();
+			this.notifyObservers();
+			socket.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
-	}
-
-	public void stop() {
-		try {
-			socket.close();
-		} catch (IOException e) {
-
-		}
 	}
 
 }

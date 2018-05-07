@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-public class Server implements Observer {
+public class Server implements Observer{
 
 	private ServerSocket server;
 	private List<ClientHandler> clients;
@@ -48,9 +48,8 @@ public class Server implements Observer {
 
 	@Override
 	public void update(Observable o, Object arg) {
-		
+
 		System.out.println("Closing client");
-		((ClientHandler)o).stop();
 		this.clients.remove(o);
 	}
 

@@ -14,7 +14,7 @@ import presentation.views.LoginScene;
 public class App extends Application {
 
 	public static void main(String[] args) throws InterruptedException, UnknownHostException, IOException {
-
+		
 		Client client = null;
 		try {
 			client = new Client("localhost", 1111);
@@ -29,8 +29,6 @@ public class App extends Application {
 		t.start();
 
 		launch(args);
-
-		t.join();
 	}
 
 	@Override

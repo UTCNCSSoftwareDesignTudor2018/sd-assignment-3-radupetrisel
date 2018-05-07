@@ -3,8 +3,6 @@ package bll.dtos;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import dal.entities.ArticleEntity;
-
 public class Article {
 
 	private String title;
@@ -19,15 +17,6 @@ public class Article {
 		this.author = author;
 		this.articleAbstract = articleAbstract;
 		this.body = body;
-	}
-
-	public Article(ArticleEntity ae) {
-
-		this.title = ae.getTitle();
-		this.articleAbstract = ae.getArticleAbstract();
-		this.body = ae.getBody();
-		this.author = ae.getAuthor().getUsername();
-
 	}
 
 	public Article() {
@@ -68,15 +57,5 @@ public class Article {
 	@Override
 	public String toString() {
 		return this.title + "\n" + this.author + "\n" + this.articleAbstract;
-	}
-
-	public ArticleEntity convert() {
-
-		ArticleEntity ae = new ArticleEntity();
-		ae.setTitle(this.title);
-		ae.setBody(this.body);
-		ae.setArticleAbstract(this.articleAbstract);
-
-		return ae;
 	}
 }

@@ -11,7 +11,11 @@ public class User {
 	private String lastName;
 	private String username;
 	private List<Article> articles;
-
+	
+	public User() {
+		
+	}
+	
 	@JsonCreator
 	public User(@JsonProperty(value = "firstName") String firstName, @JsonProperty(value = "lastName") String lastName,
 			@JsonProperty(value = "username") String username, @JsonProperty(value = "articles") List<Article> articles) {

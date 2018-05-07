@@ -12,6 +12,7 @@ public class LoginController {
 
 		if (Requester.login(loginScene.getUsername(), loginScene.getPassword()).equals("Success")){
 			
+			Requester.setUsername(loginScene.getUsername());
 			new ArticleSceneController(new ArticleScene(loginScene.getStage(), 600, 800));
 		}
 

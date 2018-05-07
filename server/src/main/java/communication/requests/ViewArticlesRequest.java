@@ -10,7 +10,6 @@ public class ViewArticlesRequest implements Request {
 	public Response execute() {
 
 		return new ViewArticlesResponse(new ArticleBLL().findAll());
-
 	}
 
 }

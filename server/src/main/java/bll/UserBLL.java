@@ -2,9 +2,9 @@ package bll;
 
 import java.util.List;
 
+import bll.converters.UserConverter;
 import bll.dtos.Article;
 import bll.dtos.User;
-import dal.entities.ArticleEntity;
 import dal.entities.UserEntity;
 import dal.repositories.UserRepository;
 
@@ -35,14 +35,15 @@ public class UserBLL {
 	}
 
 	public List<Article> viewArticles(int id) {
-		User user = new User(userRepo.findById(id));
+		
+		User user = UserConverter.fromEntity(userRepo.findById(id));
 
 		return user.getArticles();
 	}
 
-	public void addArticle(int authorId, Article article) {
+	public void addArticle(Article article) {
 
-		UserEntity user = userRepo.findById(authorId);
+		UserEntity user = userRepo.findByUsername(article.getAuthor());
 
 		new ArticleBLL().save(article, user);
 	}
