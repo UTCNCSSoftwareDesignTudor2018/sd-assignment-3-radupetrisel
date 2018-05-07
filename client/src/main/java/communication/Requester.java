@@ -1,15 +1,13 @@
 package communication;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import communication.commands.Close;
-import communication.commands.Login;
-import communication.commands.ViewArticles;
 import communication.entities.Article;
+import communication.requests.CloseRequest;
+import communication.requests.LoginRequest;
+import communication.requests.ViewArticlesRequest;
+import communication.responses.LoginResponse;
+import communication.responses.ViewArticlesResponse;
 
 public class Requester {
 
@@ -19,25 +17,18 @@ public class Requester {
 		client = c;
 	}
 
-	public static boolean login(String username, String password) {
-		
-		client.addMessage(new Login(username, password));
-		
-		String resp = client.getResponse();
-		return Boolean.parseBoolean(resp);
+	public static String login(String username, String password) {
+
+		client.addMessage(new LoginRequest(username, password));
+
+		LoginResponse resp = (LoginResponse) client.getResponse();
+		return resp.getMessage();
 	}
 
 	public static List<Article> viewArticles() {
 
-		client.addMessage(new ViewArticles());
-		List<Article> articles = null;
-		
-		try {
-			articles = new ObjectMapper().readValue(client.getResponse(), ArrayList.class);
-			System.out.println(articles.get(0));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		client.addMessage(new ViewArticlesRequest());
+		List<Article> articles = ((ViewArticlesResponse) client.getResponse()).getArticles();
 
 		return articles;
 	}
@@ -45,8 +36,7 @@ public class Requester {
 	public static void close() {
 
 		if (client != null)
-			client.addMessage(new Close());
-
+			client.addMessage(new CloseRequest());
 	}
 
 }

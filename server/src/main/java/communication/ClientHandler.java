@@ -5,39 +5,30 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.List;
+import java.util.Observable;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import bll.ArticleBLL;
-import bll.UserBLL;
-import bll.dtos.ArticleDto;
-import communication.commands.Login;
-import communication.commands.Request;
-import dal.repositories.UserRepository;
+import communication.requests.Request;
+import communication.responses.CloseResponse;
+import communication.responses.Response;
 
-public class ClientHandler implements Runnable {
+public class ClientHandler extends Observable implements Runnable {
 
 	private Socket socket;
 	private BufferedReader in;
 	private PrintWriter out;
-	private int id;
-	private UserBLL ubll;
-	private ArticleBLL abll;
 
 	public ClientHandler(Socket socket) {
 
 		System.out.println("creating new client");
 		this.socket = socket;
-		
+
 		try {
-			
+
 			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			out = new PrintWriter(socket.getOutputStream());
-			ubll = new UserBLL();
-			ubll.setUserRepo(new UserRepository());
-			abll = new ArticleBLL();
-			
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -47,62 +38,33 @@ public class ClientHandler implements Runnable {
 	public void run() {
 
 		boolean closed = false;
-		while (!closed) {
-			try {
+		try {
+			while (!closed) {
+
+				Request request = new ObjectMapper().readValue(in.readLine(), Request.class);
+
+				Response resp = request.execute();
+
+				out.println(new ObjectMapper().writeValueAsString(resp));
+				out.flush();
 				
-				String command = in.readLine();
-				
-				if (command == null) continue;
-				
-				Request request = null;
-				
-				request = new ObjectMapper().readValue(command, Request.class);
-		
-				switch (request.getClass().getSimpleName()) {
-				
-				case "Login":
-
-					Login log = (Login)request;
-					
-					int id = ubll.login(log.getUsername(), log.getPassword());
-
-					if (id > 0) {
-						out.println(true);
-						this.id = id;
-					} else {
-						out.println(false);
-					}
-
-					out.flush();
-					break;
-
-				case "ViewArticles":
-
-					List<ArticleDto> articles = abll.findAll();
-
-					ObjectMapper mapper = new ObjectMapper();
-					out.println(mapper.writeValueAsString(articles));
-					out.flush();
-					break;
-
-//				case 
-//
-//					ArticleDto article = new ObjectMapper().readValue(in.readLine(), ArticleDto.class);
-//
-//					ubll.addArticle(this.id, article);
-//					break;
-
-				case "Close":
-					System.out.println("closing client");
-					in.close();
-					out.close();
-					socket.close();
+				if (resp instanceof CloseResponse) {
+					this.notifyObservers();
 					closed = true;
-					break;
 				}
-			} catch (IOException e) {
-				e.printStackTrace();
 			}
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	public void stop() {
+		try {
+			socket.close();
+		} catch (IOException e) {
+
 		}
 	}
 

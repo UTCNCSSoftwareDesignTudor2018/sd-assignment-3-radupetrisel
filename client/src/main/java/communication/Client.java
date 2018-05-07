@@ -12,7 +12,8 @@ import java.util.concurrent.Semaphore;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import communication.commands.Request;
+import communication.requests.Request;
+import communication.responses.Response;
 
 public class Client implements Runnable {
 
@@ -20,7 +21,7 @@ public class Client implements Runnable {
 	private PrintWriter out;
 	private BufferedReader in;
 	private Queue<Request> messages;
-	private Queue<String> responses;
+	private Queue<Response> responses;
 	private Semaphore responseSemaphore;
 	private Semaphore messageSemaphore;
 
@@ -32,17 +33,18 @@ public class Client implements Runnable {
 		out = new PrintWriter(socket.getOutputStream());
 		in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		messages = new LinkedBlockingQueue<Request>();
-		responses = new LinkedBlockingQueue<String>();
+		responses = new LinkedBlockingQueue<Response>();
 
 	}
 
 	public void addMessage(Request request) {
-
+		
+		System.out.println(request);
 		this.messages.add(request);
 		messageSemaphore.release();
 	}
 
-	public String getResponse() {
+	public Response getResponse() {
 
 		try {
 			responseSemaphore.acquire();
@@ -73,7 +75,7 @@ public class Client implements Runnable {
 					out.println(new ObjectMapper().writeValueAsString(request));
 					out.flush();
 					
-					this.responses.add(in.readLine());
+					this.responses.add(new ObjectMapper().readValue(in.readLine(), Response.class));
 					responseSemaphore.release();
 				} catch (IOException e) {
 					e.printStackTrace();

@@ -6,8 +6,6 @@ import presentation.views.ArticleScene;
 public class ArticleSceneController {
 	
 	public ArticleSceneController(ArticleScene page) {
-		
 		page.setArticles(Requester.viewArticles());
-		
 	}
 }

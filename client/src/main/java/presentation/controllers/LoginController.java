@@ -10,10 +10,9 @@ public class LoginController {
 
 		loginScene.setLoginHandler(e -> {
 
-		if (Requester.login(loginScene.getUsername(), loginScene.getPassword())){
+		if (Requester.login(loginScene.getUsername(), loginScene.getPassword()).equals("Success")){
 			
 			new ArticleSceneController(new ArticleScene(loginScene.getStage(), 600, 800));
-			
 		}
 
 		});

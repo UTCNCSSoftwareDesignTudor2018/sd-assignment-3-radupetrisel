@@ -41,7 +41,7 @@ public class App extends Application {
 		new LoginController(new LoginScene(stage, 300, 300));
 
 		stage.show();
-
+		
 		stage.setOnCloseRequest(e -> Requester.close());
 	}
 

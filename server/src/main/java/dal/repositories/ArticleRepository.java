@@ -11,13 +11,13 @@ import javax.persistence.criteria.Root;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-import dal.entities.Article;
-import dal.entities.Article_;
-import dal.entities.User;
+import dal.entities.ArticleEntity;
+import dal.entities.ArticleEntity_;
+import dal.entities.UserEntity;
 
 public class ArticleRepository {
 	
-	public void save(Article article) {
+	public void save(ArticleEntity article) {
 
 		Session session = getInstance().openSession();
 		
@@ -27,43 +27,43 @@ public class ArticleRepository {
 		session.close();
 	}
 	
-	public List<Article> findByTitle(String title){
+	public List<ArticleEntity> findByTitle(String title){
 		
 		Session session = getInstance().openSession();
 		
 		CriteriaBuilder builder = session.getCriteriaBuilder();
 		
-		CriteriaQuery<Article> query = builder.createQuery(Article.class);
-		Root<Article> root = query.from(Article.class);
+		CriteriaQuery<ArticleEntity> query = builder.createQuery(ArticleEntity.class);
+		Root<ArticleEntity> root = query.from(ArticleEntity.class);
 		
-		query.select(root).where(builder.equal(root.get(Article_.title), title));
+		query.select(root).where(builder.equal(root.get(ArticleEntity_.title), title));
 		return session.createQuery(query).getResultList();				
 	}
 	
-	public List<Article> findByAuthor(User author){
+	public List<ArticleEntity> findByAuthor(UserEntity author){
 		
 		Session session = getInstance().openSession();
 		
 		CriteriaBuilder builder = session.getCriteriaBuilder();
 		
-		CriteriaQuery<Article> query = builder.createQuery(Article.class);
-		Root<Article> root = query.from(Article.class);
+		CriteriaQuery<ArticleEntity> query = builder.createQuery(ArticleEntity.class);
+		Root<ArticleEntity> root = query.from(ArticleEntity.class);
 		
-		query.select(root).where(builder.equal(root.get(Article_.author), author));
+		query.select(root).where(builder.equal(root.get(ArticleEntity_.author), author));
 		
 		return session.createQuery(query).getResultList();	
 	}
 	
-	public Article findById(int id) {
+	public ArticleEntity findById(int id) {
 		
 		Session session = getInstance().openSession();
-		Article article = session.get(Article.class, id);
+		ArticleEntity article = session.get(ArticleEntity.class, id);
 		session.close();
 		
 		return article;
 	}
 	
-	public void delete(Article article) {
+	public void delete(ArticleEntity article) {
 		
 		Session session = getInstance().openSession();
 		Transaction tx = session.beginTransaction();
@@ -72,16 +72,16 @@ public class ArticleRepository {
 		session.close();
 	}
 
-	public List<Article> findAll() {
+	public List<ArticleEntity> findAll() {
 		
 		Session session = getInstance().openSession();
 
 		CriteriaBuilder builder = session.getCriteriaBuilder();
 		
-		CriteriaQuery<Article> query = builder.createQuery(Article.class);
-		Root<Article> root = query.from(Article.class);
+		CriteriaQuery<ArticleEntity> query = builder.createQuery(ArticleEntity.class);
+		Root<ArticleEntity> root = query.from(ArticleEntity.class);
 		
-		List<Article> articles = session.createQuery(query.select(root)).getResultList();
+		List<ArticleEntity> articles = session.createQuery(query.select(root)).getResultList();
 		session.close();
 		
 		return articles;

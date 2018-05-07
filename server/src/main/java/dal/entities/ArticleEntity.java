@@ -7,12 +7,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "articles")
-public class Article {
+public class ArticleEntity {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,7 +28,7 @@ public class Article {
 	
 	@OneToOne
 	@JoinColumn
-	private User author;
+	private UserEntity author;
 
 	public int getId() {
 		return id;
@@ -63,11 +62,11 @@ public class Article {
 		this.body = body;
 	}
 
-	public User getAuthor() {
+	public UserEntity getAuthor() {
 		return author;
 	}
 
-	public void setAuthor(User author) {
+	public void setAuthor(UserEntity author) {
 		this.author = author;
 	}
 

@@ -6,16 +6,15 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
-import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-import dal.entities.User;
-import dal.entities.User_;
+import dal.entities.UserEntity;
+import dal.entities.UserEntity_;
 
 public class UserRepository {
 
-	public void save(User user) {
+	public void save(UserEntity user) {
 
 		Session session = getInstance().openSession();
 		Transaction tx = session.beginTransaction();
@@ -24,32 +23,33 @@ public class UserRepository {
 		session.close();
 	}
 	
-	public User findByUsername(String username) {
+	public UserEntity findByUsername(String username) {
 		
 		Session session = getInstance().openSession();
 		
 		CriteriaBuilder builder = session.getCriteriaBuilder();
-		CriteriaQuery<User> query = builder.createQuery(User.class);
-		Root<User> root = query.from(User.class);
+		CriteriaQuery<UserEntity> query = builder.createQuery(UserEntity.class);
+		Root<UserEntity> root = query.from(UserEntity.class);
 		
-		query.select(root).where(builder.equal(root.get(User_.username), username));
+		query.select(root);
+		query.where(builder.equal(root.get(UserEntity_.username), username));
 		
-		User user = session.createQuery(query).getSingleResult();
+		UserEntity user = session.createQuery(query).getSingleResult();
 		
 		session.close();
 		return user;
 	}
 
-	public User findById(int id) {
+	public UserEntity findById(int id) {
 
 		Session session = getInstance().openSession();
-		User user = session.get(User.class, id);
+		UserEntity user = session.get(UserEntity.class, id);
 		session.close();
 
 		return user;
 	}
 	
-	public void delete(User user) {
+	public void delete(UserEntity user) {
 		
 		Session session = getInstance().openSession();
 		Transaction tx = session.beginTransaction();

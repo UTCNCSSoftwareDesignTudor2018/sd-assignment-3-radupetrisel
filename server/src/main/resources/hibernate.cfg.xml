@@ -13,7 +13,7 @@
 		<property name="current_session_context_class">thread</property>
 
 		<property name="dialect">org.hibernate.dialect.SQLServerDialect</property>
-		<mapping class="dal.entities.User" />
-		<mapping class="dal.entities.Article" />
+		<mapping class="dal.entities.UserEntity" />
+		<mapping class="dal.entities.ArticleEntity" />
 	</session-factory>
 </hibernate-configuration>

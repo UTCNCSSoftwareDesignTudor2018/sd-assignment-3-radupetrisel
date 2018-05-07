@@ -13,7 +13,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class UserEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,7 +32,7 @@ public class User {
 	private String username;
 	
 	@OneToMany(mappedBy = "author")
-	private List<Article> articles = new ArrayList<Article>();
+	private List<ArticleEntity> articles = new ArrayList<ArticleEntity>();
 
 	public int getId() {
 		return id;
@@ -70,11 +70,11 @@ public class User {
 		this.password = password.hashCode();
 	}
 
-	public List<Article> getArticles() {
+	public List<ArticleEntity> getArticles() {
 		return articles;
 	}
 
-	public void setArticles(List<Article> articles) {
+	public void setArticles(List<ArticleEntity> articles) {
 		this.articles = articles;
 	}
 

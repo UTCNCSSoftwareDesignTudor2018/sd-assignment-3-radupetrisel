@@ -1,15 +1,15 @@
-package communication.commands;
+package communication.requests;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class Login implements Request {
+public class LoginRequest implements Request {
 
 	private String username;
 	private String password;
 
 	@JsonCreator
-	public Login(@JsonProperty(value = "username") String username, @JsonProperty(value = "password") String password) {
+	public LoginRequest(@JsonProperty(value = "username") String username, @JsonProperty(value = "password") String password) {
 		this.username = username;
 		this.password = password;
 	}
@@ -28,6 +28,10 @@ public class Login implements Request {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	
+	public String toString() {
+		return "login " + this.username + " " + this.password; 
 	}
 
 }
