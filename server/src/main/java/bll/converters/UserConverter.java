@@ -17,6 +17,7 @@ public class UserConverter {
 		user.setUsername(ue.getUsername());
 		user.setArticles(
 				ue.getArticles().stream().map(ae -> ArticleConverter.fromEntity(ae)).collect(Collectors.toList()));
+		user.setPassword(ue.getPassword());
 
 		return user;
 	}
@@ -28,7 +29,14 @@ public class UserConverter {
 		ue.setFirstName(user.getFirstName());
 		ue.setLastName(user.getLastName());
 		ue.setUsername(user.getUsername());
-		ue.setArticles(new UserRepository().findByUsername(user.getUsername()).getArticles());
+		ue.setPassword(user.getPassword());
+		
+		try {
+			ue.setArticles(new UserRepository().findByUsername(user.getUsername()).getArticles());
+		} catch (NullPointerException e) {
+			ue.setArticles(null);
+		}
+		
 		
 		return ue;
 	}

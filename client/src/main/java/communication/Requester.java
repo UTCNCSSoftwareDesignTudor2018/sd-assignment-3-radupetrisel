@@ -3,10 +3,13 @@ package communication;
 import java.util.List;
 
 import communication.entities.Article;
+import communication.entities.User;
 import communication.requests.AddArticleRequest;
 import communication.requests.CloseRequest;
+import communication.requests.CreateAccountRequest;
 import communication.requests.LoginRequest;
 import communication.requests.ViewArticlesRequest;
+import communication.responses.CreateAccountResponse;
 import communication.responses.LoginResponse;
 import communication.responses.Response;
 import communication.responses.ViewArticlesResponse;
@@ -50,6 +53,21 @@ public class Requester {
 		client.addMessage(new AddArticleRequest(article));
 		
 		Response resp = client.getResponse();
+	}
+	
+	public static String createUser(String firstName, String lastName, String username, String password) {
+		
+		User user = new User();
+		user.setFirstName(firstName);
+		user.setLastName(lastName);
+		user.setPassword(password);
+		user.setUsername(username);
+		
+		client.addMessage(new CreateAccountRequest(user));
+		
+		CreateAccountResponse response = (CreateAccountResponse)client.getResponse();
+		
+		return response.getMessage();
 	}
 
 	public static void close() {

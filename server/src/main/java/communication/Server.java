@@ -42,10 +42,6 @@ public class Server implements Observer{
 
 	}
 
-	public boolean remove(ClientHandler ch) {
-		return clients.remove(ch);
-	}
-
 	@Override
 	public void update(Observable o, Object arg) {
 

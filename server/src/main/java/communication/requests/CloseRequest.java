@@ -7,7 +7,6 @@ public class CloseRequest implements Request {
 
 	@Override
 	public Response execute() {
-
 		return new CloseResponse();
 	}
 

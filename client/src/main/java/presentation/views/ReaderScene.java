@@ -9,23 +9,22 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-public class ArticleScene {
-
-	private Button addArticle;
+public class ReaderScene{
+	
 	private Button viewArticles;
+	protected VBox leftBox;
 	private BorderPane layout;
 
-	public ArticleScene(Stage stage, int width, int height) {
+	public ReaderScene(Stage stage, int width, int height) {
 
 		layout = new BorderPane();
 
 		Scene scene = new Scene(layout, width, height);
-
-		addArticle = new Button("Add article");
+		
 		viewArticles = new Button("View articles");
 
-		VBox leftBox = new VBox();
-		leftBox.getChildren().addAll(addArticle, viewArticles);
+		leftBox = new VBox();
+		leftBox.getChildren().addAll(viewArticles);
 
 		layout.setLeft(leftBox);
 
@@ -34,10 +33,6 @@ public class ArticleScene {
 	
 	public void setCenter(Node center) {
 		this.layout.setCenter(center);
-	}
-	
-	public void setAddArticleHandler(EventHandler<ActionEvent> e) {
-		this.addArticle.setOnAction(e);
 	}
 	
 	public void setViewArticlesHandler(EventHandler<ActionEvent> e) {

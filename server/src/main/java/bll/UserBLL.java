@@ -16,26 +16,24 @@ public class UserBLL {
 		userRepo = new UserRepository();
 	}
 
-	public UserRepository getUserRepo() {
-		return userRepo;
-	}
-
-	public void setUserRepo(UserRepository userRepo) {
-		this.userRepo = userRepo;
+	public String createUser(User user) {
+		return userRepo.save(UserConverter.toEntity(user));
 	}
 
 	public int login(String username, String password) {
-		
+
 		UserEntity user = userRepo.findByUsername(username);
 		
-		if (user.getPassword() == password.hashCode())
+		if (user == null)
+			return -2;
+		else if (user.getPassword() == password.hashCode())
 			return user.getId();
 		else
 			return -1;
 	}
 
 	public List<Article> viewArticles(int id) {
-		
+
 		User user = UserConverter.fromEntity(userRepo.findById(id));
 
 		return user.getArticles();

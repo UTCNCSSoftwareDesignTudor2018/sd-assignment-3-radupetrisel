@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import bll.UserBLL;
 import bll.dtos.Article;
+import communication.responses.AddArticleResponse;
 import communication.responses.Response;
 
 public class AddArticleRequest implements Request {
